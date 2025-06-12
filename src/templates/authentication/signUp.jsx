@@ -1,5 +1,6 @@
 import Input from '../../components/Form/Input';
 import Button from '../../components/Form/Button';
+import Navbar from '../../components/Navbar/Navbar';
 import { useState } from 'react';
 
 function SignUp() {
@@ -43,9 +44,10 @@ function SignUp() {
     };
 
     return (
-        <div className="min-h-screen flex flex-col justify-center items-center bg-neutral-50">
-            <h1 className="text-2xl font-semibold mb-6 text-neutral-900">Inscription</h1>
-            <form onSubmit={handleSubmit} className="w-full max-w-xs flex flex-col gap-4 bg-white border border-neutral-200 rounded p-6">
+        <>
+        <Navbar /><div className="flex flex-col gap-4 items-center justify-center h-full">
+            <h1 className="text-2xl font-semibold">Inscription</h1>
+            <form onSubmit={handleSubmit} className="p-4 w-full max-w-xs flex flex-col gap-4">
                 <Input type="text" name="firstName" title="Prénom" value={formData.firstName} onChange={handleChange} autoComplete="firstName" />
                 <Input type="text" name="lastName" title="Nom" value={formData.lastName} onChange={handleChange} autoComplete="lastName" />
                 <Input type="text" name="phone" title="Numéro de téléphone" value={formData.phone} onChange={handleChange} autoComplete="phone" />
@@ -55,6 +57,7 @@ function SignUp() {
                 {message && <div className="text-red-600 text-sm text-center mt-2">{message}</div>}
             </form>
         </div>
+        </>
     );
 };
 

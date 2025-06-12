@@ -1,29 +1,32 @@
 import PropTypes from 'prop-types';
 import Category from './Category';
+import Navbar from '../Navbar/Navbar';
 import Dish from './Dish';
 
 const Menu = ({ categories }) => {
   return (
-    <div className="max-w-2xl mx-auto px-4 py-8">
-      <h2 className="text-xl font-semibold mb-6 text-neutral-900">Menu</h2>
-      <ul className="space-y-8">
-        {categories.map((category, categoryIndex) => (
-          <li key={categoryIndex}>
-            <Category name={category.name} />
-            <ul className="space-y-2">
-              {category.dishes.map((dish, dishIndex) => (
-                <Dish
-                  key={dishIndex}
-                  title={dish.name}
-                  description={dish.description}
-                  price={dish.price}
-                />
-              ))}
-            </ul>
-          </li>
-        ))}
-      </ul>
-    </div>
+    <>
+      <Navbar />
+      <div>
+        <h2 className="text-xl font-semibold p-6">Menu</h2>
+        <ul>
+          {categories.map((category, categoryIndex) => (
+            <li key={categoryIndex}>
+              <Category name={category.name} />
+              <ul className="space-y-2">
+                {category.dishes.map((dish, dishIndex) => (
+                  <Dish
+                    key={dishIndex}
+                    title={dish.name}
+                    description={dish.description}
+                    price={dish.price} />
+                ))}
+              </ul>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </>
   );
 };
 

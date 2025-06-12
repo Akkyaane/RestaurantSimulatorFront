@@ -1,18 +1,18 @@
-import React from "react";
 import { Link, useLocation } from "react-router-dom";
 
 const navLinks = [
   { to: "/menu", label: "Menu" },
-  { to: "/my-reservations", label: "Mes Réservations" },
-  { to: "/reservations/new", label: "Nouvelle Réservation" },
-  { to: "/signin", label: "Connexion" },
-  { to: "/signup", label: "Inscription" },
+  { to: "/my-reservations", label: "Mes réservations" },
+  { to: "/signin", label: "Se connecter" },
+  { to: "/signup", label: "S'inscrire" },
+  { to: "/reservations", label: "Toutes les réservations" },
 ];
 
-const BarNav = () => {
+const Navbar = () => {
   const location = useLocation();
   const token = localStorage.getItem("token");
   let isAdmin = false;
+
   if (token) {
     try {
       const base64Url = token.split(".")[1];
@@ -23,24 +23,25 @@ const BarNav = () => {
           .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
           .join("")
       );
+
       const userInfo = JSON.parse(jsonPayload);
-      console.log("Token décodé Navbar :", userInfo); // Debug
+
       isAdmin = userInfo.role_id === 1;
     } catch (e) {
-      console.error("Erreur décodage token :", e);
+      console.error(e);
     }
   }
+
   return (
-    <nav className="flex gap-6 items-center border-b border-neutral-200 mb-8 bg-white px-2 py-3">
+    <nav className="flex gap-2 items-center justify-center border-b-1 p-4">
       {navLinks.map((link) => (
         <Link
           key={link.to}
           to={link.to}
-          className={`text-neutral-800 text-sm font-medium px-1 pb-1 border-b-2 transition 
-            ${
-              location.pathname === link.to
-                ? "border-neutral-900"
-                : "border-transparent hover:border-neutral-400"
+          className={`text-sm font-medium px-1 border-b-2 transition 
+            ${location.pathname === link.to
+              ? "border-white"
+              : "border-transparent hover:border-white"
             }`}
         >
           {link.label}
@@ -50,4 +51,4 @@ const BarNav = () => {
   );
 };
 
-export default BarNav;
+export default Navbar;

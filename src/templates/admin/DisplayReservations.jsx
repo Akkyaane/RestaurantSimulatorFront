@@ -1,27 +1,5 @@
 import React, { useEffect, useState } from "react";
-import BarNav from "../../components/Navbar/Navbar";
-
-const cardStyle = {
-  background: "#fff",
-  borderRadius: "10px",
-  boxShadow: "0 2px 12px rgba(0,0,0,0.08)",
-  padding: "22px 28px",
-  marginBottom: "18px",
-  maxWidth: "600px",
-  marginLeft: "auto",
-  marginRight: "auto",
-  display: "flex",
-  flexDirection: "column",
-  gap: "8px",
-  color: "#222", // Texte en noir
-};
-
-const titleStyle = {
-  color: "#222", // Texte en noir
-  fontWeight: 600,
-  fontSize: "1.15rem",
-  marginBottom: "6px",
-};
+import Navbar from "../../components/Navbar/Navbar";
 
 const statusLabel = (status_id) => {
   switch (status_id) {
@@ -52,7 +30,7 @@ const DisplayReservations = () => {
         const res = await fetch("http://localhost:3001/reservations", {
           headers: {
             Authorization: `Bearer ${token}`,
-            user_id: user_id, // Ajout du user_id dans le header
+            user_id: user_id,
           },
         });
         if (!res.ok) throw new Error("Erreur lors de la récupération des réservations");
@@ -73,7 +51,6 @@ const DisplayReservations = () => {
       const reservation = reservations.find(r => r.id === id);
       if (!reservation) throw new Error("Réservation introuvable");
 
-      // Affiche le body envoyé pour debug
       const debugBody = {
         user_id: Number(reservation.user_id),
         reservation_id: Number(reservation.id),
@@ -108,65 +85,49 @@ const DisplayReservations = () => {
 
   return (
     <>
-      <BarNav />
-      <h2 style={{ textAlign: "center", margin: "24px 0 32px 0", color: "#222" }}>Toutes les Réservations</h2>
+      <Navbar />
+      <h2 className="text-xl font-semibold p-6">Toutes les réservations</h2>
+
       {loading && <div style={{ textAlign: "center" }}>Chargement...</div>}
-      {error && <div style={{ color: "#d32f2f", textAlign: "center" }}>{error}</div>}
+      {error && <div style={{ textAlign: "center" }}>{error}</div>}
       {!loading && !error && reservations.length === 0 && (
-        <div style={{ textAlign: "center", color: "#888" }}>Aucune réservation trouvée.</div>
+        <div>Aucune réservation trouvée.</div>
       )}
-      <div>
+
+      <div className="flex flex-col gap-6 py-4">
         {reservations.map((r) => (
-          <div key={r.id} style={cardStyle}>
-            <div style={titleStyle}>Réservation #{r.id}</div>
-            <div><b>User ID :</b> {r.user_id}</div>
-            {/* Affiche la date et l'heure seulement si elles existent */}
-            {r.date && r.date !== "null" && r.date !== null ? (() => {
-              // Affichage heure locale sans décalage UTC
-              const dateObj = new Date(r.date);
-              const datePart = dateObj.toLocaleDateString('fr-FR');
-              const heure = dateObj.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', hour12: false });
+          <div key={r.id} className="flex flex-col rounded border-1 border-white p-6 gap-2">
+            <div className="text-lg">Réservation n°{r.id}</div>
+            {(!r.date || !r.number_people || !r.status_id) && (
+              <pre>{JSON.stringify(r, null, 2)}</pre>
+            )}
+            <div className="text-sm">UserId : {r.user_id}</div>
+            {r.date && (() => {
+              const [datePart, timePart] = r.date.split('T');
+              const heure = timePart ? timePart.substring(0, 5) : '';
               return (
                 <>
-                  <div><b>Date :</b> {datePart}</div>
-                  <div><b>Heure :</b> {heure}</div>
+                  <div className="text-sm">Date : {datePart}</div>
+                  <div className="text-sm">Heure : {heure}</div>
                 </>
               );
-            })() : (
-              <div style={{ color: "#d32f2f" }}><b>Date :</b> Non renseignée</div>
-            )}
-            <div><b>Nombre de personnes :</b> {r.number_people}</div>
-            <div><b>Statut :</b> {statusLabel(r.status_id)}</div>
-            {r.note && <div><b>Note :</b> {r.note}</div>}
-            {/* Supprime tout affichage JSON brut ici */}
-            <div style={{display: "flex", gap: 8, marginTop: 8}}>
+            })()}
+            {r.number_people !== undefined && <div className="text-sm">Nombre de personnes : {r.number_people}</div>}
+            {r.status_id !== undefined && <div className="text-sm">Statut : {statusLabel(r.status_id)}</div>}
+            {r.note && <div>Note : {r.note}</div>}
+            <div className="flex gap-3 justify-center">
               <button
                 onClick={() => updateStatus(r.id, 2)}
                 disabled={r.status_id === 2 || r.status_id === 3}
-                style={{
-                  background: "#1976d2",
-                  color: "#fff",
-                  border: "none",
-                  borderRadius: 4,
-                  padding: "6px 12px",
-                  cursor: r.status_id === 2 || r.status_id === 3 ? "not-allowed" : "pointer"
-                }}
+                className="w-fit bg-transparent hover:outline-2 hover:outline-white focus:outline-2 focus:outline-white text-white p-2 rounded outline-1 outline-white"
               >
                 Passer en cours
               </button>
-              <button
+              <button className="w-fit bg-transparent hover:outline-2 hover:outline-white focus:outline-2 focus:outline-white text-white p-2 rounded outline-1 outline-white"
                 onClick={() => updateStatus(r.id, 3)}
                 disabled={r.status_id === 3}
-                style={{
-                  background: "#388e3c",
-                  color: "#fff",
-                  border: "none",
-                  borderRadius: 4,
-                  padding: "6px 12px",
-                  cursor: r.status_id === 3 ? "not-allowed" : "pointer"
-                }}
               >
-                Supprimer
+                Annuler
               </button>
             </div>
           </div>

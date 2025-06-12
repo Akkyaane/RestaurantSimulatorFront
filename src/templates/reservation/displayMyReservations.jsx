@@ -1,26 +1,6 @@
 import React, { useEffect, useState } from "react";
-import BarNav from "../../components/Navbar/Navbar";
-
-const cardStyle = {
-  background: "#fff",
-  borderRadius: "10px",
-  boxShadow: "0 2px 12px rgba(0,0,0,0.08)",
-  padding: "22px 28px",
-  marginBottom: "18px",
-  maxWidth: "600px",
-  marginLeft: "auto",
-  marginRight: "auto",
-  display: "flex",
-  flexDirection: "column",
-  gap: "8px",
-};
-
-const titleStyle = {
-  color: "#222",
-  fontWeight: 600,
-  fontSize: "1.15rem",
-  marginBottom: "6px",
-};
+import Navbar from "../../components/Navbar/Navbar";
+import { Link } from 'react-router-dom';
 
 const DisplayMyReservations = () => {
   const token = localStorage.getItem("token");
@@ -36,8 +16,6 @@ const DisplayMyReservations = () => {
       setLoading(true);
       setError("");
       try {
-        // Debug : affiche l'user_id et le contenu du token décodé
-       
         if (token) {
           const base64Url = token.split('.')[1];
           const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
@@ -47,13 +25,12 @@ const DisplayMyReservations = () => {
               .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
               .join('')
           );
-          const decoded = JSON.parse(jsonPayload);
         }
 
         const res = await fetch(`http://localhost:3001/my-reservations`, {
           headers: {
             Authorization: `Bearer ${token}`,
-            'user_id': user_id, // <-- Correction ici
+            'user_id': user_id,
           },
         });
         if (!res.ok) {
@@ -72,8 +49,7 @@ const DisplayMyReservations = () => {
     fetchReservations();
   }, [token, user_id]);
 
-  // Vérifie si l'utilisateur est connecté
-  const isAuthenticated = !!token && !!user_id;
+  const isAuthenticated = token && user_id;
 
   const statusLabel = (status_id) => {
     switch (status_id) {
@@ -90,47 +66,44 @@ const DisplayMyReservations = () => {
 
   return (
     <>
-      <BarNav />
-      <h2 style={{ textAlign: "center", margin: "24px 0 32px 0", color: "#222" }}>Mes Réservations</h2>
-      {/* Affiche l'user_id pour debug */}
-    
-      {/* N'affiche PAS les liens ou composants d'inscription/connexion si connecté */}
-      {!isAuthenticated && (
-        <div style={{ textAlign: "center", marginBottom: 24 }}>
-          {/* Remplace ceci par tes vrais liens ou composants */}
-          <a href="/sign-in" style={{ marginRight: 12 }}>Connexion</a>
-          <a href="/sign-up">Inscription</a>
-        </div>
-      )}
-      {loading && <div style={{ textAlign: "center" }}>Chargement...</div>}
-      {error && <div style={{ color: "#d32f2f", textAlign: "center" }}>{error}</div>}
+      <Navbar />
+      <h2 className="text-xl font-semibold p-6">Mes réservations</h2>
+
+      {loading && <div className="text-center">Chargement...</div>}
+      {error && <div className="text-center">{error}</div>}
       {!loading && !error && reservations.length === 0 && (
-        <div style={{ textAlign: "center", color: "#888" }}>Aucune réservation trouvée.</div>
+        <div className="text-center">Aucune réservation trouvée.</div>
       )}
-      <div>
+
+      <div className="flex flex-col gap-6 py-4">
         {reservations.map((r) => (
-          <div key={r.id} style={cardStyle}>
-            <div style={titleStyle}>Réservation #{r.id}</div>
-            {/* Debug : affiche la réservation brute si les champs sont manquants */}
+          <div key={r.id} className="flex flex-col rounded border-1 border-white p-6 gap-2">
+            <div className="text-lg">Réservation n°{r.id}</div>
             {(!r.date || !r.number_people || !r.status_id) && (
-              <pre style={{color: "#d32f2f", fontSize: "0.85em"}}>{JSON.stringify(r, null, 2)}</pre>
+              <pre>{JSON.stringify(r, null, 2)}</pre>
             )}
             {r.date && (() => {
               // Séparation date et heure
               const [datePart, timePart] = r.date.split('T');
-              const heure = timePart ? timePart.substring(0,5) : '';
+              const heure = timePart ? timePart.substring(0, 5) : '';
               return (
                 <>
-                  <div style={{color: "#222"}}><b>Date :</b> {datePart}</div>
-                  <div style={{color: "#222"}}><b>Heure :</b> {heure}</div>
+                  <div className="text-sm">Date : {datePart}</div>
+                  <div className="text-sm">Heure : {heure}</div>
                 </>
               );
             })()}
-            {r.number_people !== undefined && <div style={{color: "#222"}}><b>Nombre de personnes :</b> {r.number_people}</div>}
-            {r.status_id !== undefined && <div style={{color: "#222"}}><b>Statut :</b> {statusLabel(r.status_id)}</div>}
-            {r.note && <div><b>Note :</b> {r.note}</div>}
+            {r.number_people !== undefined && <div className="text-sm">Nombre de personnes : {r.number_people}</div>}
+            {r.status_id !== undefined && <div className="text-sm">Statut : {statusLabel(r.status_id)}</div>}
+            {r.note && <div>Note : {r.note}</div>}
           </div>
         ))}
+        <Link
+          to="/reservations/new"
+          className="w-fit bg-transparent hover:outline-2 hover:outline-white focus:outline-2 focus:outline-white text-white p-2 rounded outline-1 outline-white"
+        >
+          Ajouter une réservation
+        </Link>
       </div>
     </>
   );

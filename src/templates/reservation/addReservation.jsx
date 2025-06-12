@@ -1,5 +1,7 @@
 import React, { useState } from "react";
-import BarNav from "../../components/Navbar/Navbar";
+import Navbar from "../../components/Navbar/Navbar";
+import Input from "../../components/Form/Input";
+import Button from "../../components/Form/Button";
 
 const formContainerStyle = {
   maxWidth: "420px",
@@ -51,7 +53,7 @@ const errorStyle = {
 const AddReservationForm = ({ onReservationCreated }) => {
   const token = localStorage.getItem("token");
   const user_id = localStorage.getItem("user_id");
-  const userName = localStorage.getItem("name"); 
+  const userName = localStorage.getItem("name");
   const [form, setForm] = useState({
     number_people: 1,
     date: "",
@@ -153,62 +155,15 @@ const AddReservationForm = ({ onReservationCreated }) => {
 
   return (
     <>
-      <BarNav />
-      {/* Affiche le nom si connecté */}
-      {isAuthenticated && userName && (
-        <div style={{ textAlign: "center", margin: "12px 0", color: "#222", fontWeight: 500 }}>
-          Connecté en tant que : {userName}
-        </div>
-      )}
-      {/* N'affiche PAS les liens ou composants d'inscription/connexion si connecté */}
-      {!isAuthenticated && (
-        <div style={{ textAlign: "center", marginBottom: 24 }}>
-          <a href="/sign-in" style={{ marginRight: 12 }}>Connexion</a>
-          <a href="/sign-up">Inscription</a>
-        </div>
-      )}
-      <div style={formContainerStyle}>
-        <form onSubmit={handleSubmit}>
-          <h2 style={{ textAlign: "center", marginBottom: 24, color: "#222" }}>Nouvelle Réservation</h2>
-          {error && <div style={errorStyle}>{error}</div>}
-          <label style={labelStyle}>
-            Nombre de personnes
-            <input
-              name="number_people"
-              type="number"
-              min={1}
-              value={form.number_people}
-              onChange={handleChange}
-              required
-              style={inputStyle}
-            />
-          </label>
-          <label style={labelStyle}>
-            Date
-            <input
-              name="date"
-              type="date"
-              min={today}
-              value={form.date}
-              onChange={handleChange}
-              required
-              style={inputStyle}
-            />
-          </label>
-          <label style={labelStyle}>
-            Heure
-            <input
-              name="time"
-              type="time"
-              value={form.time}
-              onChange={handleChange}
-              required
-              style={inputStyle}
-            />
-          </label>
-          <button type="submit" disabled={loading} style={buttonStyle}>
-            {loading ? "Envoi..." : "Réserver"}
-          </button>
+      <Navbar />
+      <div className="flex flex-col gap-4 items-center justify-center h-full">
+        <form onSubmit={handleSubmit} className="border-1 border-white p-8 flex flex-col gap-4 rounded">
+          <h2 className="text-xl font-semibold p-6">Ajouter une réservation</h2>
+          {error && <div className="text-center">{error}</div>}
+          <Input type="number" name="number_people" title="Nombre de personnes" value={form.number_people} onChange={handleChange} min={1} />
+          <Input type="date" name="date" title="Date" value={form.date} onChange={handleChange} min={today} />
+          <Input type="time" name="time" title="Heure" value={form.time} onChange={handleChange} min={today} />
+          <Button type="submit" name="reserve" title="Réserver" />
         </form>
       </div>
     </>

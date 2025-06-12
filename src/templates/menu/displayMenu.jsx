@@ -18,7 +18,7 @@ function DisplayMenu() {
       });
   }, []);
 
-  if (loading) return <p className="text-center text-neutral-500 mt-8">Chargement...</p>;
+  if (loading) return <p className="text-center mt-8">Chargement...</p>;
 
   return (
     <Menu categories={categories}/>

@@ -1,13 +1,12 @@
 import PropTypes from 'prop-types';
 
-const Button = ({ name, title }) => {
+const Button = ({name, title}) => {
     return (
         <button
             type="submit"
             name={name}
             id={name}
-            className="w-full bg-neutral-900 hover:bg-neutral-800 text-black rounded py-2 px-4 text-sm transition"
-        >
+            className="w-full bg-transparent hover:outline-2 hover:outline-white focus:outline-2 focus:outline-white text-white p-2 rounded outline-1 outline-white">
             {title}
         </button>
     );
