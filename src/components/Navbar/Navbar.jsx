@@ -29,6 +29,25 @@ const activeLinkStyle = {
 
 const BarNav = () => {
   const location = useLocation();
+  const token = localStorage.getItem("token");
+  let isAdmin = false;
+  if (token) {
+    try {
+      const base64Url = token.split(".")[1];
+      const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+      const jsonPayload = decodeURIComponent(
+        atob(base64)
+          .split("")
+          .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+          .join("")
+      );
+      const userInfo = JSON.parse(jsonPayload);
+      console.log("Token décodé Navbar :", userInfo); // Debug
+      isAdmin = userInfo.role_id === 1;
+    } catch (e) {
+      console.error("Erreur décodage token :", e);
+    }
+  }
   return (
     <nav style={navStyle}>
       <Link
@@ -59,23 +78,36 @@ const BarNav = () => {
         Nouvelle Réservation
       </Link>
       <Link
-        to="/signin"
+        to="/sign-in"
         style={{
           ...linkStyle,
-          ...(location.pathname === "/signin" ? activeLinkStyle : {}),
+          ...(location.pathname === "/sign-in" ? activeLinkStyle : {}),
         }}
       >
         Connexion
       </Link>
       <Link
-        to="/signup"
+        to="/sign-up"
         style={{
           ...linkStyle,
-          ...(location.pathname === "/signup" ? activeLinkStyle : {}),
+          ...(location.pathname === "/sign-up" ? activeLinkStyle : {}),
         }}
       >
         Inscription
       </Link>
+      {isAdmin && (
+        <Link
+          to="/reservations"
+          style={{
+            ...linkStyle,
+            ...(location.pathname === "/admin/reservations"
+              ? activeLinkStyle
+              : {}),
+          }}
+        >
+          Reservations
+        </Link>
+      )}
     </nav>
   );
 };

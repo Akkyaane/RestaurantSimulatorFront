@@ -51,15 +51,11 @@ const errorStyle = {
 const AddReservationForm = ({ onReservationCreated }) => {
   const token = localStorage.getItem("token");
   const user_id = localStorage.getItem("user_id");
-  const userName = localStorage.getItem("name"); // Ajout récupération du nom
-
+  const userName = localStorage.getItem("name"); 
   const [form, setForm] = useState({
-    name: "",
-    phone: "",
     number_people: 1,
     date: "",
     time: "",
-    note: "",
   });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -75,13 +71,29 @@ const AddReservationForm = ({ onReservationCreated }) => {
   };
 
   const validate = () => {
-    if (!form.name.trim()) return "Le nom est requis";
-    if (!form.phone.trim()) return "Le téléphone est requis";
     if (form.number_people < 1) return "Nombre de personnes invalide";
     if (!form.date) return "La date est requise";
     if (form.date < today) return "La date doit être aujourd'hui ou plus tard";
     if (!form.time) return "L'heure est requise";
     return "";
+  };
+
+  const getUserIdFromToken = () => {
+    if (!token) return null;
+    try {
+      const base64Url = token.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const jsonPayload = decodeURIComponent(
+        atob(base64)
+          .split('')
+          .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+          .join('')
+      );
+      const userInfo = JSON.parse(jsonPayload);
+      return userInfo.id;
+    } catch {
+      return null;
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -94,12 +106,19 @@ const AddReservationForm = ({ onReservationCreated }) => {
     setError("");
     setLoading(true);
 
-    if (!user_id) {
+    const userIdFromToken = getUserIdFromToken();
+    if (!userIdFromToken) {
       setError("Utilisateur non authentifié. Veuillez vous reconnecter.");
       setLoading(false);
       return;
     }
-    
+
+    // Fusionne date et heure en format "YYYY-MM-DD HH:mm"
+    function combineDateTimeLocal(date, time) {
+      return `${date} ${time}`;
+    }
+    const dateTime = combineDateTimeLocal(form.date, form.time);
+
     try {
       const res = await fetch("http://localhost:3001/reservations", {
         method: "POST",
@@ -108,20 +127,17 @@ const AddReservationForm = ({ onReservationCreated }) => {
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          user_id,
-          number_people: form.number_people,
-          date: `${form.date} ${form.time}`,
-          note: form.note,
+          user_id: userIdFromToken,
+          status_id: 1,
+          numberPeople: Number(form.number_people),
+          date: dateTime, // <-- format "YYYY-MM-DD HH:mm"
         }),
       });
       if (!res.ok) throw new Error("Erreur lors de la réservation");
       setForm({
-        name: "",
-        phone: "",
         number_people: 1,
         date: "",
         time: "",
-        note: "",
       });
       if (onReservationCreated) onReservationCreated();
       alert("Réservation créée !");
@@ -156,26 +172,6 @@ const AddReservationForm = ({ onReservationCreated }) => {
           <h2 style={{ textAlign: "center", marginBottom: 24, color: "#222" }}>Nouvelle Réservation</h2>
           {error && <div style={errorStyle}>{error}</div>}
           <label style={labelStyle}>
-            Nom
-            <input
-              name="name"
-              value={form.name}
-              onChange={handleChange}
-              required
-              style={inputStyle}
-            />
-          </label>
-          <label style={labelStyle}>
-            Téléphone
-            <input
-              name="phone"
-              value={form.phone}
-              onChange={handleChange}
-              required
-              style={inputStyle}
-            />
-          </label>
-          <label style={labelStyle}>
             Nombre de personnes
             <input
               name="number_people"
@@ -207,15 +203,6 @@ const AddReservationForm = ({ onReservationCreated }) => {
               value={form.time}
               onChange={handleChange}
               required
-              style={inputStyle}
-            />
-          </label>
-          <label style={labelStyle}>
-            Note
-            <input
-              name="note"
-              value={form.note}
-              onChange={handleChange}
               style={inputStyle}
             />
           </label>
