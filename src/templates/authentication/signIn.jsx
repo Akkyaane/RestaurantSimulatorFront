@@ -59,14 +59,12 @@ function SignIn() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-      <h1 className="text-3xl font-bold mb-6">Connexion</h1>
-      <form onSubmit={handleSubmit} className="bg-white p-8 rounded shadow-md w-full max-w-sm">
-        <div className="mb-4">
-          <Input type="text" name="email" title="E-mail" value={formData.email} onChange={handleChange} autoComplete="email" />
-          <Input type="password" name="password" title="Mot de passe" value={formData.password} onChange={handleChange} autoComplete="password" />
-        </div>
-        {error && <div className="text-red-500 mb-2">{error}</div>}
+    <div className="min-h-screen flex flex-col items-center justify-center bg-neutral-50">
+      <h1 className="text-2xl font-semibold mb-6">Connexion</h1>
+      <form onSubmit={handleSubmit} className="bg-white border border-neutral-200 rounded p-6 w-full max-w-xs flex flex-col gap-4">
+        <Input type="text" name="email" title="E-mail" value={formData.email} onChange={handleChange} autoComplete="email" />
+        <Input type="password" name="password" title="Mot de passe" value={formData.password} onChange={handleChange} autoComplete="password" />
+        {error && <div className="text-red-600 text-sm text-center">{error}</div>}
         <Button type="submit" name="signin" title="Se connecter" />
       </form>
     </div>

@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 
 const Category = ({name}) => {
     return (
-            <h3>{name}</h3>
+        <h3 className="text-lg font-medium text-neutral-800 mb-2">{name}</h3>
     );
 }
 

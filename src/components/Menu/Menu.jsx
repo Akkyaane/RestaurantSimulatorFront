@@ -4,19 +4,19 @@ import Dish from './Dish';
 
 const Menu = ({ categories }) => {
   return (
-    <div className="menu">
-      <h2 className="text-2xl font-bold mb-4">Menu</h2>
-      <ul>
+    <div className="max-w-2xl mx-auto px-4 py-8">
+      <h2 className="text-xl font-semibold mb-6 text-neutral-900">Menu</h2>
+      <ul className="space-y-8">
         {categories.map((category, categoryIndex) => (
           <li key={categoryIndex}>
             <Category name={category.name} />
-            <ul>
+            <ul className="space-y-2">
               {category.dishes.map((dish, dishIndex) => (
                 <Dish
                   key={dishIndex}
-                  title={dish.title || dish.name} // ← si "name" est utilisé à la place de "title"
+                  title={dish.name}
                   description={dish.description}
-                  price={Number(dish.price)}
+                  price={dish.price}
                 />
               ))}
             </ul>
@@ -34,7 +34,7 @@ Menu.propTypes = {
       dishes: PropTypes.arrayOf(
         PropTypes.shape({
           title: PropTypes.string,
-          name: PropTypes.string, // ← au cas où
+          name: PropTypes.string,
           description: PropTypes.string.isRequired,
           price: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
         })

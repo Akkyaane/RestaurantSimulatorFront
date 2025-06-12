@@ -2,8 +2,8 @@ import PropTypes from 'prop-types';
 
 const Input = ({ type, name, title, value, onChange }) => {
     return (
-        <div className='flex flex-col gap-2'>
-            <label htmlFor={name}>{title}</label>
+        <div className="flex flex-col gap-1">
+            <label htmlFor={name} className="text-sm text-neutral-700">{title}</label>
             <input
                 type={type}
                 name={name}
@@ -12,7 +12,7 @@ const Input = ({ type, name, title, value, onChange }) => {
                 onChange={onChange}
                 required
                 autoComplete={name}
-                className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="bg-neutral-100 border border-neutral-300 rounded px-2 py-1 text-sm focus:outline-none focus:border-neutral-500 transition"
             />
         </div>
     );

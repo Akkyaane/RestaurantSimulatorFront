@@ -24,6 +24,7 @@ const titleStyle = {
 
 const DisplayMyReservations = () => {
   const token = localStorage.getItem("token");
+
   const user_id = localStorage.getItem("user_id");
 
   const [reservations, setReservations] = useState([]);
@@ -47,7 +48,6 @@ const DisplayMyReservations = () => {
               .join('')
           );
           const decoded = JSON.parse(jsonPayload);
-          console.log("Token décodé :", decoded);
         }
 
         const res = await fetch(`http://localhost:3001/my-reservations`, {

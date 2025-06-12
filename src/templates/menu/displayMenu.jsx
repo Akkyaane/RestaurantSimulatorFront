@@ -6,7 +6,7 @@ function DisplayMenu() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('http://localhost:3001/api/menu')
+    fetch('http://localhost:3001/menu')
       .then((res) => res.json())
       .then((data) => {
         setCategories(data);
@@ -18,7 +18,7 @@ function DisplayMenu() {
       });
   }, []);
 
-  if (loading) return <p>Chargement...</p>;
+  if (loading) return <p className="text-center text-neutral-500 mt-8">Chargement...</p>;
 
   return (
     <Menu categories={categories}/>
