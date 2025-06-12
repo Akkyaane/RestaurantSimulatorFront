@@ -11,6 +11,25 @@ const navLinks = [
 
 const BarNav = () => {
   const location = useLocation();
+  const token = localStorage.getItem("token");
+  let isAdmin = false;
+  if (token) {
+    try {
+      const base64Url = token.split(".")[1];
+      const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+      const jsonPayload = decodeURIComponent(
+        atob(base64)
+          .split("")
+          .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+          .join("")
+      );
+      const userInfo = JSON.parse(jsonPayload);
+      console.log("Token décodé Navbar :", userInfo); // Debug
+      isAdmin = userInfo.role_id === 1;
+    } catch (e) {
+      console.error("Erreur décodage token :", e);
+    }
+  }
   return (
     <nav className="flex gap-6 items-center border-b border-neutral-200 mb-8 bg-white px-2 py-3">
       {navLinks.map((link) => (

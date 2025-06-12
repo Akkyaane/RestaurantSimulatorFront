@@ -115,7 +115,17 @@ const DisplayMyReservations = () => {
             {(!r.date || !r.number_people || !r.status_id) && (
               <pre style={{color: "#d32f2f", fontSize: "0.85em"}}>{JSON.stringify(r, null, 2)}</pre>
             )}
-            {r.date && <div style={{color: "#222"}}><b>Date :</b> {r.date}</div>}
+            {r.date && (() => {
+              // Séparation date et heure
+              const [datePart, timePart] = r.date.split('T');
+              const heure = timePart ? timePart.substring(0,5) : '';
+              return (
+                <>
+                  <div style={{color: "#222"}}><b>Date :</b> {datePart}</div>
+                  <div style={{color: "#222"}}><b>Heure :</b> {heure}</div>
+                </>
+              );
+            })()}
             {r.number_people !== undefined && <div style={{color: "#222"}}><b>Nombre de personnes :</b> {r.number_people}</div>}
             {r.status_id !== undefined && <div style={{color: "#222"}}><b>Statut :</b> {statusLabel(r.status_id)}</div>}
             {r.note && <div><b>Note :</b> {r.note}</div>}
