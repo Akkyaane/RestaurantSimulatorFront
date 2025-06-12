@@ -1,11 +1,16 @@
 import PropTypes from 'prop-types';
 
-const Input = ({type, name, title}) => {
+const Input = ({type, name, title, value, onChange, autoComplete}) => {
     return (
         <div>
             <label htmlFor={name}>{title}</label>
             <input
-                type={type} name={name} id={name}
+                type={type}
+                name={name}
+                id={name}
+                value={value}
+                onChange={onChange}
+                autoComplete={autoComplete}
                 className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
         </div>
@@ -15,6 +20,10 @@ const Input = ({type, name, title}) => {
 Input.propTypes = {
     type: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
+    title: PropTypes.string,
+    value: PropTypes.string,
+    onChange: PropTypes.func,
+    autoComplete: PropTypes.string,
 };
 
 export default Input;
